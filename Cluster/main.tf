@@ -1,6 +1,7 @@
 provider "aws" {
-  region = "ap-south-1"
+  region = "eu-north-1"  # Change this to your EC2 region (Stockholm)
 }
+
 
 resource "aws_vpc" "devopsshack_vpc" {
   cidr_block = "10.0.0.0/16"
@@ -111,7 +112,7 @@ resource "aws_eks_node_group" "devopsshack" {
   instance_types = ["t2.large"]
 
   remote_access {
-    ec2_ssh_key = "project" # Updated to use your existing key pair name
+    ec2_ssh_key               = "project"  # This is the name of your key pair in Stockholm
     source_security_group_ids = [aws_security_group.devopsshack_node_sg.id]
   }
 }
