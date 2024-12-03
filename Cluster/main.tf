@@ -100,22 +100,17 @@ resource "aws_eks_cluster" "devopsshack" {
 resource "aws_eks_node_group" "devopsshack" {
   cluster_name    = aws_eks_cluster.devopsshack.name
   node_group_name = "devopsshack-node-group"
-  node_role_arn   = aws_iam_role.devopsshack_node_group_role.arn
-  subnet_ids      = aws_subnet.devopsshack_subnet[*].id
-
+  node_role_arn   = aws_iam_role.devopsshack-node-role.arn
+  subnet_ids      = aws_subnet.subnet_id[*]
+  instance_types  = ["t2.micro"]
+  key_name        = "DevOps-Shack"  # Ensure this matches the key pair name
   scaling_config {
     desired_size = 3
     max_size     = 3
     min_size     = 3
   }
-
-  instance_types = ["t2.large"]
-
-  remote_access {
-    ec2_ssh_key = var.ssh_key_name
-    source_security_group_ids = [aws_security_group.devopsshack_node_sg.id]
-  }
 }
+
 
 resource "aws_iam_role" "devopsshack_cluster_role" {
   name = "devopsshack-cluster-role"
