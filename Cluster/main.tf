@@ -86,8 +86,8 @@ resource "aws_security_group" "devopsshack_node_sg" {
   }
 }
 
-resource "aws_eks_cluster" "devopsshack" {
-  name     = "devopsshack-cluster"
+resource "aws_eks_cluster" "devopsshack_new" {  # Updated name to avoid conflict
+  name     = "devopsshack-new-cluster"  # Updated name to avoid conflict
   role_arn = aws_iam_role.devopsshack_cluster_role.arn
 
   vpc_config {
@@ -96,9 +96,9 @@ resource "aws_eks_cluster" "devopsshack" {
   }
 }
 
-resource "aws_eks_node_group" "devopsshack" {
-  cluster_name    = aws_eks_cluster.devopsshack.name
-  node_group_name = "devopsshack-node-group"
+resource "aws_eks_node_group" "devopsshack_new" {  # Updated name to avoid conflict
+  cluster_name    = aws_eks_cluster.devopsshack_new.name  # Updated name to avoid conflict
+  node_group_name = "devopsshack-new-node-group"  # Updated name to avoid conflict
   node_role_arn   = aws_iam_role.devopsshack_node_group_role.arn
   subnet_ids      = aws_subnet.devopsshack_subnet[*].id
 
@@ -172,4 +172,20 @@ resource "aws_iam_role_policy_attachment" "devopsshack_node_group_cni_policy" {
 resource "aws_iam_role_policy_attachment" "devopsshack_node_group_registry_policy" {
   role       = aws_iam_role.devopsshack_node_group_role.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+}
+
+output "cluster_id" {
+  value = aws_eks_cluster.devopsshack_new.id
+}
+
+output "node_group_id" {
+  value = aws_eks_node_group.devopsshack_new.id
+}
+
+output "vpc_id" {
+  value = aws_vpc.devopsshack_vpc.id
+}
+
+output "subnet_ids" {
+  value = aws_subnet.devopsshack_subnet[*].id
 }
