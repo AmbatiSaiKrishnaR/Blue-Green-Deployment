@@ -1,7 +1,6 @@
 provider "aws" {
-  region = "eu-north-1"  # Change this to your EC2 region (Stockholm)
+  region = "ap-south-1"
 }
-
 
 resource "aws_vpc" "devopsshack_vpc" {
   cidr_block = "10.0.0.0/16"
@@ -97,11 +96,11 @@ resource "aws_eks_cluster" "devopsshack" {
   }
 }
 
-rresource "aws_eks_node_group" "devopsshack" {
+resource "aws_eks_node_group" "devopsshack" {
   cluster_name    = aws_eks_cluster.devopsshack.name
   node_group_name = "devopsshack-node-group"
   node_role_arn   = aws_iam_role.devopsshack_node_group_role.arn
-  subnet_ids      = aws_subnet.subnet_ids
+  subnet_ids      = aws_subnet.devopsshack_subnet[*].id
 
   scaling_config {
     desired_size = 3
@@ -109,10 +108,13 @@ rresource "aws_eks_node_group" "devopsshack" {
     min_size     = 3
   }
 
-  key_name = "DevOps-Shack"  # Ensure this matches the key pair name
+  instance_types = ["t2.large"]
+
+  remote_access {
+    ec2_ssh_key = var.ssh_key_name
+    source_security_group_ids = [aws_security_group.devopsshack_node_sg.id]
+  }
 }
-
-
 
 resource "aws_iam_role" "devopsshack_cluster_role" {
   name = "devopsshack-cluster-role"
